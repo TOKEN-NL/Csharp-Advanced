@@ -2,7 +2,12 @@ using Csharp_Advanced.Models;
 using Csharp_Advanced.Repositories;
 using Csharp_Advanced.Seeding;
 using Csharp_Advanced.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options =>
@@ -28,6 +33,8 @@ builder.Services.AddScoped<LocationService>();
 builder.Services.AddScoped<ReservationRepository>();
 builder.Services.AddScoped<ReservationService>();
 
+// Add AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Add services to the container.
 
@@ -43,6 +50,9 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var dbContext = services.GetRequiredService<AppDbContext>();
+
+    // Wipe DB
+    DatabaseSeeder.DeleteAllEntries(dbContext);
 
     // Seed de database
     DatabaseSeeder.Seed(dbContext);

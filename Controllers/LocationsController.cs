@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Csharp_Advanced.Services;
 using Csharp_Advanced.Models;
+using AutoMapper;
 
 namespace Csharp_Advanced.Controllers
 {
@@ -16,12 +17,14 @@ namespace Csharp_Advanced.Controllers
     {
         private readonly AppDbContext _context;
         private readonly LocationService _locationService;
+        private readonly IMapper _mapper; // Injecteer IMapper
 
-        public LocationsController(AppDbContext context, LocationService locationService)
+
+        public LocationsController(AppDbContext context, LocationService locationService, IMapper mapper)
         {
             _context = context;
             _locationService = locationService;
-
+            _mapper = mapper;
         }
 
         // GET: api/Locations
@@ -32,7 +35,15 @@ namespace Csharp_Advanced.Controllers
           {
               return NotFound();
           }
-            return await _context.Locations.ToListAsync();
+            var locations = await _context.Locations
+        .Include(l => l.Landlord)
+            .ThenInclude(l => l.Avatar)
+        .Include(l => l.Images)
+        .ToListAsync();
+
+            var locationDtos = _mapper.Map<List<LocationDto>>(locations);
+
+            return Ok(locationDtos);
         }
 
         // GET: api/Locations/5
