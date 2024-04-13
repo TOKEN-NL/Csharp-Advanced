@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Csharp_Advanced;
+using Csharp_Advanced.Services;
+using Csharp_Advanced.Models;
 
 namespace Csharp_Advanced.Controllers
 {
@@ -15,9 +16,11 @@ namespace Csharp_Advanced.Controllers
     {
         private readonly AppDbContext _context;
 
+
         public LandlordsController(AppDbContext context)
         {
             _context = context;
+
         }
 
         // GET: api/Landlords
@@ -119,5 +122,8 @@ namespace Csharp_Advanced.Controllers
         {
             return (_context.Landlords?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        
+
     }
 }

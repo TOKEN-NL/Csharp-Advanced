@@ -1,4 +1,4 @@
-﻿namespace Csharp_Advanced
+﻿namespace Csharp_Advanced.Models
 {
     public class Reservation
     {

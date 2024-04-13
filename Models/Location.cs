@@ -1,12 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.Reflection.Metadata;
 
-namespace Csharp_Advanced
+namespace Csharp_Advanced.Models
 {
     public class Location
     {
         public int Id { get; set; }
-        public string Title{ get; set; }
+        public string Title { get; set; }
         public string SubTitle { get; set; }
         public string Description { get; set; }
         public LocationType Type { get; set; }

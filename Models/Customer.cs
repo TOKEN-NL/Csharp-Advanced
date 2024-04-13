@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Csharp_Advanced
+namespace Csharp_Advanced.Models
 {
     public class Customer
     {

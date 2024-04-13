@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Csharp_Advanced;
+using Csharp_Advanced.Services;
+using Csharp_Advanced.Models;
 
 namespace Csharp_Advanced.Controllers
 {
@@ -14,10 +15,13 @@ namespace Csharp_Advanced.Controllers
     public class LocationsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly LocationService _locationService;
 
-        public LocationsController(AppDbContext context)
+        public LocationsController(AppDbContext context, LocationService locationService)
         {
             _context = context;
+            _locationService = locationService;
+
         }
 
         // GET: api/Locations
@@ -118,6 +122,14 @@ namespace Csharp_Advanced.Controllers
         private bool LocationExists(int id)
         {
             return (_context.Locations?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        // Return all locations: api/Locations/GetAll
+        [HttpGet("GetAll")]
+        public IActionResult GetAll()
+        {
+            var locations = _locationService.GetAllLocations();
+            return Ok(locations);
         }
     }
 }

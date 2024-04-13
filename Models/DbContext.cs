@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Csharp_Advanced
+namespace Csharp_Advanced.Models
 {
     public class AppDbContext : DbContext
     {
@@ -16,20 +16,20 @@ namespace Csharp_Advanced
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           
+
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Customer)
                 .WithMany(c => c.Reservations)
-                .IsRequired(); 
-             
+                .IsRequired();
+
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Location)
                 .WithMany(l => l.Reservations)
-                .IsRequired(); 
+                .IsRequired();
 
             modelBuilder.Entity<Location>()
-                .HasMany(l => l.Images);             
-               
+                .HasMany(l => l.Images);
+
 
         }
     }
