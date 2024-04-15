@@ -17,5 +17,9 @@ namespace Csharp_Advanced.Services
         {
             return _locationRepository.GetAllLocations();
         }
+        public IEnumerable<Location> GetAllLocationsNew()
+        {
+            return _locationRepository.GetAllLocationsNew();
+        }
     }
 }

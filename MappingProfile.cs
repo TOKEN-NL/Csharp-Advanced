@@ -8,9 +8,17 @@ namespace Csharp_Advanced
     {
         public MappingProfile()
         {
+            //V1 DTO
             CreateMap<Location, LocationDto>()
-                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => GetCoverImageUrl(src)))
-                .ForMember(dest => dest.LandlordAvatarURL, opt => opt.MapFrom(src => GetLandlordAvatarUrl(src)));
+                .ForMember(dest => dest.imageURL, opt => opt.MapFrom(src => GetCoverImageUrl(src)))
+                .ForMember(dest => dest.landlordAvatarURL, opt => opt.MapFrom(src => GetLandlordAvatarUrl(src)));
+
+            //V2 DTO
+            CreateMap<Location, LocationDtoV2>()
+                .ForMember(dest => dest.imageURL, opt => opt.MapFrom(src => GetCoverImageUrl(src)))
+                .ForMember(dest => dest.landlordAvatarURL, opt => opt.MapFrom(src => GetLandlordAvatarUrl(src)))
+                .ForMember(dest => dest.type, opt => opt.MapFrom(src => src.Type))
+                .ForMember(dest => dest.price, opt => opt.MapFrom(src => src.PricePerDay));
         }
 
         private string GetCoverImageUrl(Location src)

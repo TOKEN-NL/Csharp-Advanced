@@ -1,5 +1,6 @@
 ﻿
 using Csharp_Advanced.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Csharp_Advanced.Repositories
 {
@@ -15,6 +16,13 @@ namespace Csharp_Advanced.Repositories
         public IEnumerable<Location> GetAllLocations()
         {
             return _context.Locations.ToList();
+        }
+        public IEnumerable<Location> GetAllLocationsNew()
+        {
+            return _context.Locations
+                .Include(l => l.Images) 
+                .Include(l => l.Landlord.Avatar) 
+                .ToList();
         }
     }
 }
