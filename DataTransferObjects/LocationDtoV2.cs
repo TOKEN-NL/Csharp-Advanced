@@ -1,4 +1,4 @@
-﻿namespace Csharp_Advanced
+﻿namespace Csharp_Advanced.DataTransferObjects
 {
     public class LocationDtoV2
     {
@@ -9,6 +9,6 @@
         public string imageURL { get; set; }
         public string landlordAvatarURL { get; set; }
         public string price { get; set; }
-        public string type { get; set;}
+        public string type { get; set; }
     }
 }

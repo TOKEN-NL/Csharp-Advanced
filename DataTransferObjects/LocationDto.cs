@@ -1,4 +1,4 @@
-﻿namespace Csharp_Advanced
+﻿namespace Csharp_Advanced.DataTransferObjects
 {
     public class LocationDto
     {

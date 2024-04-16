@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Csharp_Advanced.DataTransferObjects;
 using Csharp_Advanced.Models;
 using System.Linq;
 
@@ -13,12 +14,16 @@ namespace Csharp_Advanced
                 .ForMember(dest => dest.imageURL, opt => opt.MapFrom(src => GetCoverImageUrl(src)))
                 .ForMember(dest => dest.landlordAvatarURL, opt => opt.MapFrom(src => GetLandlordAvatarUrl(src)));
 
+            CreateMap<MaxPriceDto, LocationDetailsDto>()
+                .ForMember(dest => dest.PricePerDay, opt => opt.MapFrom(src => src.Price));
+
             //V2 DTO
             CreateMap<Location, LocationDtoV2>()
                 .ForMember(dest => dest.imageURL, opt => opt.MapFrom(src => GetCoverImageUrl(src)))
                 .ForMember(dest => dest.landlordAvatarURL, opt => opt.MapFrom(src => GetLandlordAvatarUrl(src)))
                 .ForMember(dest => dest.type, opt => opt.MapFrom(src => src.Type))
                 .ForMember(dest => dest.price, opt => opt.MapFrom(src => src.PricePerDay));
+            
         }
 
         private string GetCoverImageUrl(Location src)
@@ -35,5 +40,6 @@ namespace Csharp_Advanced
             }
             return null;
         }
+        
     }
 }

@@ -62,6 +62,7 @@ namespace Csharp_Advanced.Seeding
                 PricePerDay = 300,
                 Type = Location.LocationType.Cottage,
                 Landlord = landlord, 
+                AvailableFeatures = (Features)55
                
             };
             var imagesLocation1 = new ObservableCollection<Image>
@@ -83,7 +84,8 @@ namespace Csharp_Advanced.Seeding
                 NumberOfGuests = 4,
                 PricePerDay = 400,
                 Type = Location.LocationType.Appartment,
-                Landlord = landlord
+                Landlord = landlord,
+                AvailableFeatures = (Features)35
             };
             var imagesLocation2 = new ObservableCollection<Image>
             {

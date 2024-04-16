@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Csharp_Advanced.Services;
 using Csharp_Advanced.Models;
 using AutoMapper;
+using System.Threading;
+using Csharp_Advanced.DataTransferObjects;
 
 namespace Csharp_Advanced.Controllers
 {
@@ -36,22 +38,15 @@ namespace Csharp_Advanced.Controllers
         /// </summary>
         /// <returns>Een lijst met alle locaties.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Location>>> GetLocations()
+        public async Task<ActionResult<IEnumerable<LocationDto>>> GetLocations(CancellationToken cancellationToken = default)
         {
-          if (_context.Locations == null)
-          {
-              return NotFound();
-          }
-            var locations = await _context.Locations
-        .Include(l => l.Landlord)
-            .ThenInclude(l => l.Avatar)
-        .Include(l => l.Images)
-        .ToListAsync();
+            var locations = await _locationService.GetAllLocationsNewAsync(cancellationToken);
 
             var locationDtos = _mapper.Map<List<LocationDto>>(locations);
 
             return Ok(locationDtos);
         }
+
 
         // GET: api/Locations/5
         /// <summary>
@@ -169,12 +164,77 @@ namespace Csharp_Advanced.Controllers
         /// </summary>
         /// <returns>Een IActionResult met een lijst van alle locaties.</returns>
         [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
-            var locations = _locationService.GetAllLocations();
+            var locations = await _locationService.GetAllLocationsAsync(cancellationToken);
             return Ok(locations);
         }
 
-      
+
+        // POST: api/Locations/Search
+        [HttpPost("Search")]
+        public async Task<ActionResult<IEnumerable<LocationDtoV2>>> SearchLocations(SearchRequestDto requestDto, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                // Haal alle locaties op uit de repository
+                var allLocations = await _locationService.GetAllLocationsNewAsync(cancellationToken);
+
+                // Voer de filtercriteria toe op de locaties
+                var filteredLocations = allLocations.Where(location =>
+                    (!requestDto.Features.HasValue || (location.AvailableFeatures & (Location.Features)requestDto.Features.Value) == (Location.Features)requestDto.Features.Value) &&
+                    (!requestDto.Type.HasValue || location.Type == (Location.LocationType)requestDto.Type.Value) &&
+                    (!requestDto.Rooms.HasValue || location.Rooms >= requestDto.Rooms.Value) &&
+                    (!requestDto.MinPrice.HasValue || location.PricePerDay >= requestDto.MinPrice.Value) &&
+                    (!requestDto.MaxPrice.HasValue || location.PricePerDay <= requestDto.MaxPrice.Value)
+                );
+
+                // Map de gefilterde locaties naar DTO's
+                var locationDtos = filteredLocations.Select(location => new LocationDtoV2
+                {
+                    id = location.Id,
+                    title = location.Title,
+                    subTitle = location.SubTitle,
+                    description = location.Description,
+                    imageURL = location.Images.FirstOrDefault(i => i.IsCover)?.Url,
+                    landlordAvatarURL = location.Landlord?.Avatar?.Url,
+                    price = location.PricePerDay.ToString(),
+                    type = location.Type.ToString()
+                }).ToList();
+
+                return Ok(locationDtos);
+            }
+            catch (Exception ex)
+            {
+                // Handle de fout en retourneer een foutreactie
+                return StatusCode(StatusCodes.Status500InternalServerError, "Er is een fout opgetreden bij het zoeken naar locaties.");
+            }
+        }
+
+        [HttpGet("GetMaxPrice")]
+        public async Task<IActionResult> GetMaxPrice()
+        {
+            // Implementatie om de maximale prijs van locaties op te halen
+            var maxPriceDto = await _locationService.GetMaxPriceAsync();
+            if (maxPriceDto == null)
+            {
+                return NotFound();
+            }
+            return Ok(maxPriceDto);
+        }
+
+        [HttpGet("GetDetails/{id}")]
+        public async Task<IActionResult> GetLocationDetails(int id)
+        {
+            var locationDetailsDto = await _locationService.GetLocationDetailsAsync(id);
+
+            if (locationDetailsDto == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(locationDetailsDto);
+        }
+
     }
 }

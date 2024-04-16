@@ -1,6 +1,8 @@
 ﻿
+using Csharp_Advanced.DataTransferObjects;
 using Csharp_Advanced.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace Csharp_Advanced.Repositories
 {
@@ -13,16 +15,30 @@ namespace Csharp_Advanced.Repositories
             _context = context;
         }
 
-        public IEnumerable<Location> GetAllLocations()
+        public async Task<IEnumerable<Location>> GetAllLocationsAsync(CancellationToken cancellationToken = default)
         {
-            return _context.Locations.ToList();
+            return await _context.Locations.ToListAsync(cancellationToken);
         }
-        public IEnumerable<Location> GetAllLocationsNew()
+        public async Task<IEnumerable<Location>> GetAllLocationsNewAsync(CancellationToken cancellationToken = default)
         {
-            return _context.Locations
-                .Include(l => l.Images) 
-                .Include(l => l.Landlord.Avatar) 
-                .ToList();
+            return await _context.Locations
+                .Include(l => l.Images) // Inclusief afbeeldingen
+                .Include(l => l.Landlord.Avatar) // Inclusief landlord avatar
+                .ToListAsync(cancellationToken);
+        }
+        public async Task<Location> GetLocationByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _context.Locations
+                .Include(l => l.Images)
+                .Include(l => l.Landlord.Avatar)
+                .FirstOrDefaultAsync(l => l.Id == id, cancellationToken);
+        }
+
+        public async Task<MaxPriceDto> GetMaxPriceAsync(CancellationToken cancellationToken)
+        {
+           float maxPrice = await _context.Locations.MaxAsync(l => l.PricePerDay, cancellationToken);
+            return new MaxPriceDto { Price = (int)maxPrice };
+
         }
     }
 }
