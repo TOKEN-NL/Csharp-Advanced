@@ -95,8 +95,8 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var dbContext = services.GetRequiredService<AppDbContext>();
 
-    // Wipe DB
-    DatabaseSeeder.DeleteAllEntries(dbContext);
+    // Wipe DB      -- standaard uit, alleen aan voor opnieuw seeden
+    // DatabaseSeeder.DeleteAllEntries(dbContext);
 
     // Seed de database
     DatabaseSeeder.Seed(dbContext);
