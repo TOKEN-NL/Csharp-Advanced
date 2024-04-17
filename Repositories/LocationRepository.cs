@@ -40,5 +40,20 @@ namespace Csharp_Advanced.Repositories
             return new MaxPriceDto { Price = (int)maxPrice };
 
         }
+        public async Task<IEnumerable<Reservation>> GetReservationsByLocationIdAsync(int locationId)
+        {
+            var location = await _context.Locations
+                .Include(l => l.Reservations)
+                .FirstOrDefaultAsync(l => l.Id == locationId);
+
+            if (location != null)
+            {
+                return location.Reservations;
+            }
+            else
+            {
+                return Enumerable.Empty<Reservation>(); // Return an empty collection if location is not found
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Csharp_Advanced.Models;
 using Csharp_Advanced.Repositories;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging;
 using System.Threading;
 
 namespace Csharp_Advanced.Services
@@ -13,6 +14,7 @@ namespace Csharp_Advanced.Services
         public LocationService(LocationRepository locationRepository)
         {
             _locationRepository = locationRepository;
+
         }
 
         public async Task<IEnumerable<Location>> GetAllLocationsAsync(CancellationToken cancellationToken = default)
@@ -65,6 +67,26 @@ namespace Csharp_Advanced.Services
         {
             return await _locationRepository.GetMaxPriceAsync(cancellationToken);
             
+        }
+        public async Task<IEnumerable<DateTime>> GetUnAvailableDatesAsync(int locationId)
+        {
+            // Haal alle reserveringen voor de locatie
+            var reservations = await _locationRepository.GetReservationsByLocationIdAsync(locationId);
+
+            // Maak een lijst
+            var unAvailableDates = new List<DateTime>();
+
+            // Voeg de start tot en met einddatums toe aan de lijst
+            foreach (var reservation in reservations)
+            {
+                var datesInRange = Enumerable.Range(0, (int)(reservation.EndDate - reservation.StartDate).TotalDays + 1)
+                    .Select(offset => reservation.StartDate.AddDays(offset))
+                    .ToList();
+
+                unAvailableDates.AddRange(datesInRange);
+            }
+
+            return unAvailableDates;
         }
     }
 }

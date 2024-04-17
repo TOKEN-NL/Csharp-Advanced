@@ -37,6 +37,8 @@ builder.Services.AddScoped<LocationService>();
 builder.Services.AddScoped<ReservationRepository>();
 builder.Services.AddScoped<ReservationService>();
 
+builder.Services.AddScoped<CustomerRepository>();
+
 // Add services to the container.
 
 // Add AutoMapper

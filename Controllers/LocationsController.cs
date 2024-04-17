@@ -235,6 +235,28 @@ namespace Csharp_Advanced.Controllers
 
             return Ok(locationDetailsDto);
         }
+        [HttpGet("UnAvailableDates/{locationId}")]
+        public async Task<ActionResult<UnAvailableDatesResponseDto>> GetUnAvailableDates(int locationId)
+        {
+            try
+            {
+                var unAvailableDates = await _locationService.GetUnAvailableDatesAsync(locationId);
+
+
+                if (unAvailableDates == null || !unAvailableDates.Any())
+                {
+                    return Ok(new UnAvailableDatesResponseDto { UnAvailableDates = new List<DateTime>() });
+                }
+
+                return Ok(new UnAvailableDatesResponseDto { UnAvailableDates = unAvailableDates.ToList() });
+            }
+            catch (Exception ex)
+            {
+                // Als er een fout optreedt  HTTP 500 (Internal Server Error)
+                return StatusCode(500, $"Er is een fout opgetreden bij het ophalen van onbeschikbare data: {ex.Message}");
+            }
+        }
+
 
     }
 }

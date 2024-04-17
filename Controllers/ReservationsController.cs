@@ -7,11 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Csharp_Advanced.Services;
 using Csharp_Advanced.Models;
+using Csharp_Advanced.DataTransferObjects;
 
 namespace Csharp_Advanced.Controllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Controller voor het beheren van reserveringen.
+    /// </summary>
     [ApiController]
+    [Route("api/[controller]")]
+    [ApiVersion("1")]
     public class ReservationsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -87,7 +92,7 @@ namespace Csharp_Advanced.Controllers
 
         // POST: api/Reservations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Post")]
         public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
         {
           if (_context.Reservations == null)
@@ -126,11 +131,37 @@ namespace Csharp_Advanced.Controllers
         }
 
         // Return all reservations
-        [HttpGet]
+        /// <summary>
+        /// Haalt alle reserveringen op.
+        /// </summary>
+        [HttpGet("GetAllReservations")]
         public IActionResult GetAllReservations()
         {
             var reservations = _reservationService.GetAllReservations();
             return Ok(reservations);
         }
+        // Maak een reservering
+        /// <summary>
+        /// Maakt een nieuwe reservering.
+        /// </summary>
+        /// <param name="requestDto">De gegevens voor het maken van de reservering.</param>
+        [HttpPost]
+        public async Task<ActionResult<ReservationResponseDto>> MakeReservation(ReservationRequestDto requestDto)
+        {
+            try
+            {
+                // Roep de service aan om de reservering te maken
+                var reservationResponse = await _reservationService.MakeReservationAsync(requestDto);
+
+                // Retourneer de respons van de reservering
+                return Ok(reservationResponse);
+            }
+            catch (Exception ex)
+            {
+                // Als er een fout optreedt, retourneer dan een foutreactie
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Er is een fout opgetreden bij het maken van de reservering: {ex.Message}");
+            }
+        }
+
     }
 }
