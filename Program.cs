@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-
+// C# advanced opdracht Kento Bergsma S1105076
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options =>
